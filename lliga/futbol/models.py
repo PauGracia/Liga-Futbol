@@ -41,18 +41,18 @@ class Partit(models.Model):
     
     
     def gols_local(self):
-        return self.event_set.all().count()
+        return self.event_set.filter(ugador__equip=self.equip_local).count()
     
     def gols_visitant(self):
-        return self.event_set.all()
+        return self.event_set.filter(ugador__equip=self.equip_visitant).count()
 
     def __str__(self):
         
-        return f"{self.equip_local} vs {self.equip_visitant} 
+        return f"{self.equip_local} vs {self.equip_visitant}"
 
 class Event(models.Model):
     partit = models.ForeignKey(Partit, on_delete=models.CASCADE)
-    jugador = models.ForeignKey(Jugador, on_delete=models.CASCADE, related_name="esdeveniments")
+    jugador = models.ForeignKey(Jugador, on_delete=models.CASCADE)
     tipus_esdeveniment = models.CharField(max_length=50, choices=[
         ('gol', 'Gol'),
         ('targeta_groga', 'Targeta Groga'),
@@ -62,4 +62,5 @@ class Event(models.Model):
     minut = models.IntegerField()
 
     def __str__(self):
-        return f"{self.jugador.nom} - {self.tipus_esdeveniment} ({self.minut}')"
+         return f"{self.jugador.nom} - {self.tipus_esdeveniment} ({self.minut}’)"
+
