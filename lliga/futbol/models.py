@@ -1,4 +1,3 @@
-
 from django.db import models
 
 
@@ -38,17 +37,16 @@ class Partit(models.Model):
     equip_local = models.ForeignKey(Equip, on_delete=models.CASCADE, related_name="partits_locals")
     equip_visitant = models.ForeignKey(Equip, on_delete=models.CASCADE, related_name="partits_visitants")
     data = models.DateTimeField(null=True,blank=True)
-    
-    
+
+
     def gols_local(self):
-        return self.event_set.filter(ugador__equip=self.equip_local).count()
-    
+        return  self.event_set.filter(jugador__equip=self.equip_local,tipus_esdeveniment="gol").count()
     def gols_visitant(self):
-        return self.event_set.filter(ugador__equip=self.equip_visitant).count()
+         return  self.event_set.filter(jugador__equip=self.equip_visitant,tipus_esdeveniment="gol").count()
+
 
     def __str__(self):
-        
-        return f"{self.equip_local} vs {self.equip_visitant}"
+        return f"{self.equip_local} vs {self.equip_visitant} "
 
 class Event(models.Model):
     partit = models.ForeignKey(Partit, on_delete=models.CASCADE)
@@ -57,10 +55,9 @@ class Event(models.Model):
         ('gol', 'Gol'),
         ('targeta_groga', 'Targeta Groga'),
         ('targeta_vermella', 'Targeta Vermella'),
-        ('substitucio', 'Substitució')
+        ('substitucio', 'SubstituciÃ³')
     ])
     minut = models.IntegerField()
 
     def __str__(self):
-         return f"{self.jugador.nom} - {self.tipus_esdeveniment} ({self.minut}’)"
-
+        return f"{self.jugador.nom} - {self.tipus_esdeveniment} ({self.minut}')"
