@@ -32,9 +32,13 @@ class Command(BaseCommand):
         for i in range(20):
             ciutat = faker.city()
             prefix = choice(prefix_list)  # Selección aleatoria de un prefijo
-            nom = f"{prefix} {ciutat}" if prefix else ciutat
+            nom = f"{prefix} {ciutat} {randint(1, 10000)}" if prefix else ciutat
             any_fundacio = randint(1898, 1999)
             equip = Equip(ciutat=ciutat, nom=nom, lliga=lliga, any_fundacio=any_fundacio)
+            if Equip.objects.filter(nom=nom).exists():
+                print(f"L'equip {nom} ja existeix, se saltarà la creació.")
+                continue  # Salta este equipo y pasa al siguiente
+
             equip.save()
             lliga.equips.add(equip)
 

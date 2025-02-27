@@ -1,0 +1,16 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Nuevo Jugador</title>
+</head>
+<body>
+    <h2>Agregar Jugador</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Guardar</button>
+    </form>
+    <a href="{% url 'menu' %}">Volver al menú</a>
+</body>
+</html>

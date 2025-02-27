@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Golejadors - {{ lliga.nom }}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body class="container mt-5">
+    <h2>Taula de Golejadors - {{ lliga.nom }}</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Posició</th>
+                <th>Jugador</th>
+                <th>Equip</th>
+                <th>Gols</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for jugador, gols in classificacio_golejadors %}
+            <tr>
+                <td>{{ forloop.counter }}</td>  <!-- Posición en la tabla -->
+                <td>{{ jugador.nom }}</td>
+                <td>{{ jugador.equip.nom }}</td>
+                <td>{{ gols }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" class="text-center">Encara no hi ha gols registrats</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{% url 'menu' %}" class="btn btn-primary">Tornar al menú</a>
+</body>
+</html>

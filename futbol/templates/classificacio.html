@@ -1,5 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clasificación Lliga Iberica</title>
+    <style>
+        /* Estilo general para el body */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Título principal */
+        h1 {
+            text-align: center;
+            color: #4CAF50;
+            margin-top: 20px;
+        }
+
+        /* Estilo para la lista ordenada */
+        ol {
+            width: 60%;
+            margin: 0 auto;
+            padding: 0;
+            list-style-type: decimal;
+            font-size: 18px;
+        }
+
+        /* Estilo para cada elemento de la lista */
+        li {
+            padding: 8px;
+            margin: 8px 0;
+            background-color: #ffffff;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s;
+        }
+
+        /* Efecto hover para los elementos de la lista */
+        li:hover {
+            background-color: #e0f7fa;
+        }
+
+        /* Estilo para los puntos y el nombre del equipo */
+        .equip-name {
+            font-weight: bold;
+            color: #2196F3;
+        }
+
+        .points {
+            font-style: italic;
+            color: #FF5722;
+        }
+
+        .button-div {
+            display: flex;
+            flex-direction: column; 
+            align-items: center; 
+            width: 100%;
+          }
+
+        .enlace {
+            
+            font-size: 18px;
+            margin: 15px;
+            padding: 10px 20px; /* Ajusta el padding para que el botón tenga un tamaño decente */
+            background-color: #FF5722;
+            color: #2196F3;
+            border: none; /* Elimina el borde por defecto del enlace */
+            border-radius: 5px; /* Agrega un borde redondeado para que parezca un botón */
+            cursor: pointer; /* Cambia el cursor a una mano para indicar que es un botón */
+            text-decoration: none; /* Elimina la decoración de texto por defecto del enlace */
+            transition: background-color 0.3s ease; /* Agrega una transición para que el botón cambie de color suavemente al hacer clic */
+          }
+          
+          #enlace:hover {
+            background-color: #FFC107; /* Cambia el color de fondo al hacer clic */
+          }
+
+    </style>
+</head>
+<body>
+
+    <h1>{{ lliga.nom }}</h1>
+
+<br>
+
 <ol>
-{% for equip in classificacio %}
-	<li>{{equip.1}} ({{equip.0}} punts)</li>
-{% endfor %}
+    {% for equip in classificacio %}
+        <li>
+            <span class="equip-name">{{ equip.1 }}</span> 
+            <span class="points">({{ equip.0 }} punts)</span>
+        </li>
+    {% endfor %}
 </ol>
+<br>
+<div class="button-div">
+    <a class= "enlace" href="http://127.0.0.1:8000/">Volver</a>
+    <a class= "enlace" href="{% url 'golejadors' lliga.id %}" class="btn btn-success mt-3">Veure Golejadors</a>
+    <a class= "enlace" href="{% url 'taula_partits' lliga.id %}">Veure Taula de Partits</a>
+
+</div>
+
+</body>
+</html>
+
+	
