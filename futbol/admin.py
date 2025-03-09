@@ -1,5 +1,9 @@
 from django.contrib import admin
 from futbol.models import *
+   
+from django.contrib.auth.models import User
+from futbol.models import Jugador, Equip
+
 
 class EventInline(admin.TabularInline):
     model = Event
@@ -33,11 +37,25 @@ class PartitAdmin(admin.ModelAdmin):
         obj.gols_visitant = obj.event_set.filter(tipus=Event.EventType.GOL, equip=obj.equip_visitant).count()
         super().save_model(request, obj, form, change)
         
+        
+ 
 
+class JugadorAdmin(admin.ModelAdmin):
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        try:
+            equip = Equip.objects.get(usuari=request.user)
+            return qs.filter(equip=equip)
+        except Equip.DoesNotExist:
+            return qs.none()
+        
+        
+
+admin.site.register(Jugador, JugadorAdmin)
 admin.site.register(Partit, PartitAdmin)
-
-
 admin.site.register(Equip)
 admin.site.register(Lliga)
-admin.site.register(Jugador)
+
 admin.site.register(Event)

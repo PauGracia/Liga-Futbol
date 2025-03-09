@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django import forms
 from futbol.models import *
 from django.shortcuts import redirect
+from django.contrib.auth.decorators import login_required
     
 
     
@@ -138,6 +139,21 @@ def classificacio(request, lliga_id):
     
     #return render(request, "classificacio.html", {"classificacio": classi})
     return render(request, "classificacio.html", {"classificacio": classi, "lliga": lliga})
+
+
+
+
+@login_required
+def gestionar_equip(request):
+    try:
+        equip = Equip.objects.get(usuari=request.user)
+    except Equip.DoesNotExist:
+        return render(request, "error.html", {"error": "No tienes un equipo asignado."})
+
+    jugadors = equip.jugadors.all()
+
+    return render(request, "gestionar_equip.html", {"equip": equip, "jugadors": jugadors})
+
 
 
 

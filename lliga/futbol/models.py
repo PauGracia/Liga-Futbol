@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 
 class Lliga(models.Model):
@@ -13,6 +14,7 @@ class Equip(models.Model):
     lliga = models.ForeignKey(Lliga, on_delete=models.CASCADE, related_name="equips")
     any_fundacio = models.IntegerField()
     estadi = models.CharField(max_length=100)
+    usuari = models.OneToOneField(User, on_delete=models.SET_NULL, null=True, blank=True)#OneToOneField para relacionar usuarios con equipos
 
     def __str__(self):
         return self.nom
