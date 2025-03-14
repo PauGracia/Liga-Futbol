@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 
 class Lliga(models.Model):
@@ -14,6 +15,9 @@ class Equip(models.Model):
     any_fundacio = models.IntegerField()
     estadi = models.CharField(max_length=100)
     ciutat = models.CharField(max_length=100, default='Desconocido')
+       
+    # Relación OneToOne con User (gestor)
+    usuari = models.OneToOneField(User, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return self.nom

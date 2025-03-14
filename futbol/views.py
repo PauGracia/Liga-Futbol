@@ -143,6 +143,8 @@ def classificacio(request, lliga_id):
 
 
 
+
+
 @login_required
 def gestionar_equip(request):
     try:

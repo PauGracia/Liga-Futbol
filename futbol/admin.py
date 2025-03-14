@@ -5,6 +5,8 @@ from django.contrib.auth.models import User
 from futbol.models import Jugador, Equip
 
 
+
+
 class EventInline(admin.TabularInline):
     model = Event
     fields = ["minut", "tipus", "jugador", "equip"]
@@ -37,7 +39,31 @@ class PartitAdmin(admin.ModelAdmin):
         obj.gols_visitant = obj.event_set.filter(tipus=Event.EventType.GOL, equip=obj.equip_visitant).count()
         super().save_model(request, obj, form, change)
         
-        
+
+
+
+class EquipAdmin(admin.ModelAdmin):
+    list_display = ('nom', 'lliga', 'mostrar_usuari')  # Mostrar 'usuari' en el admin
+    search_fields = ('nom', 'lliga__nom')  # Buscar por nombre de equipo o liga
+    list_filter = ('lliga',)  # Filtros para la liga
+
+    # Método para mostrar el nombre de 'usuari' en el admin
+    def mostrar_usuari(self, obj):
+        if obj.usuari:
+            return obj.usuari.username  # Muestra el nombre del usuario asignado
+        return "Sin asignar"
+    mostrar_usuari.short_description = 'Gestor'  # Cambiar nombre de la columna en el admin
+
+    # Filtrar por el usuario que está logueado
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if request.user.is_superuser:  # Si es superusuario, muestra todos los equipos
+            return qs
+        return qs.filter(usuari=request.user)  # Si no es superusuario, muestra solo el equipo asignado al usuario
+
+
+
+
  
 
 class JugadorAdmin(admin.ModelAdmin):
@@ -55,7 +81,8 @@ class JugadorAdmin(admin.ModelAdmin):
 
 admin.site.register(Jugador, JugadorAdmin)
 admin.site.register(Partit, PartitAdmin)
-admin.site.register(Equip)
+
+admin.site.register(Equip, EquipAdmin)
 admin.site.register(Lliga)
 
 admin.site.register(Event)

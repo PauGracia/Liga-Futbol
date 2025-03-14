@@ -2,6 +2,9 @@
 from django.contrib import admin
 from django.urls import path, include
 from futbol import views  # Asegúrate de importar las vistas desde 'futbol'
+from django.contrib import admin
+from django.urls import path
+from .api import api
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -12,4 +15,11 @@ urlpatterns = [
     path("classificacio/<int:lliga_id>", views.classificacio, name="classificacio"),
     path('golejadors/<int:lliga_id>/', views.golejadors, name='golejadors'),  # Nueva ruta
     path('taula_partits/<int:lliga_id>/', views.taula_partits, name='taula_partits'),
+   
+
+
+    path("admin/", admin.site.urls),
+    path("api/", api.urls),
+
+
 ]
