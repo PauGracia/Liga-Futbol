@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>{{ jugador.nom }}</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        color: #333;
+        margin: 0;
+        padding: 20px;
+      }
+      .card {
+        width: 50%;
+        margin: 30px auto;
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      }
+      h2 {
+        text-align: center;
+        color: #4caf50;
+      }
+      p {
+        font-size: 16px;
+        margin: 10px 0;
+      }
+      a {
+        color: #2196f3;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      .back {
+        display: inline-block;
+        margin-top: 20px;
+        background-color: #ff5722;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        text-decoration: none;
+        transition: 0.3s;
+      }
+      .back:hover {
+        background-color: #e64a19;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h2>{{ jugador.nom }}</h2>
+      <p>
+        <strong>Equip:</strong>
+        <a href="{% url 'equip_detall' jugador.equip.id %}"
+          >{{ jugador.equip.nom }}</a
+        >
+      </p>
+      <p><strong>Posició:</strong> {{ jugador.get_posicio_display }}</p>
+      <p><strong>Dorsal:</strong> {{ jugador.dorsal }}</p>
+      <p><strong>Nacionalitat:</strong> {{ jugador.nacionalitat }}</p>
+
+      {% if jugador.posicio == "PT" %}
+      <p><strong>Gols encaixats:</strong> {{ jugador.gols_encajats }}</p>
+      {% else %}
+      <p><strong>Gols marcats:</strong> {{ jugador.gols_marcats }}</p>
+      {% endif %}
+    </div>
+
+    <div style="text-align: center">
+      <a href="{% url 'equip_detall' jugador.equip.id %}" class="back"
+        >Tornar a l'equip</a
+      >
+    </div>
+  </body>
+</html>

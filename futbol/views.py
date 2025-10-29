@@ -4,6 +4,10 @@ from futbol.models import *
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
     
+from django.shortcuts import render, get_object_or_404, redirect
+
+from django.db.models import F, FloatField, ExpressionWrapper
+
 
     
 class MenuForm(forms.Form):
@@ -132,7 +136,8 @@ def classificacio(request, lliga_id):
                 punts += 1
         
         # Afegim l'equip i els seus punts a la llista
-        classi.append((punts, equip.nom))
+        classi.append((punts, equip))
+
     
     # Ordenem la llista de forma descendent
     classi.sort(reverse=True, key=lambda x: x[0])  # Ordenar per punts
@@ -159,3 +164,46 @@ def gestionar_equip(request):
 
 
 
+# futbol/views.py
+
+
+
+def equip_detall(request, equip_id):
+    equip = get_object_or_404(Equip, id=equip_id)
+    jugadors = equip.jugadors.all()
+    return render(request, "equip_detall.html", {
+        "equip": equip,
+        "jugadors": jugadors
+    })
+
+
+def jugador_detall(request, jugador_id):
+    jugador = get_object_or_404(Jugador, id=jugador_id)
+    return render(request, "jugador_detall.html", {
+        "jugador": jugador
+    })
+
+
+def classificacio_porters(request, lliga_id):
+    lliga = get_object_or_404(Lliga, id=lliga_id)
+
+    # Filtra només porters que hagin jugat almenys 1 partit
+    porters = (
+        Jugador.objects.filter(
+            equip__lliga=lliga,
+            posicio__in=['PT', 'POR'],
+            partits_jugats__gt=0
+        )
+        .annotate(
+            mitjana_gols=ExpressionWrapper(
+                F('gols_encaixats') / F('partits_jugats'),
+                output_field=FloatField()
+            )
+        )
+        .order_by('mitjana_gols')  # millor porter primer (menys gols per partit)
+    )
+
+    return render(request, "classificacio_porters.html", {
+        "lliga": lliga,
+        "porters": porters,
+    })

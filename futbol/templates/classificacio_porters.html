@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ca">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Classificació de Porters - {{ lliga.nom }}</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f7f7f7;
+        text-align: center;
+      }
+      h1 {
+        color: #2b7a78;
+      }
+      table {
+        width: 80%;
+        margin: 20px auto;
+        border-collapse: collapse;
+        background-color: white;
+        border-radius: 8px;
+        overflow: hidden;
+      }
+      th,
+      td {
+        padding: 12px;
+        border: 1px solid #ddd;
+      }
+      th {
+        background-color: #3aafa9;
+        color: white;
+        text-transform: uppercase;
+      }
+      tr:nth-child(even) {
+        background-color: #e9f5f5;
+      }
+      a {
+        color: #2b7a78;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      .back-btn {
+        margin-top: 20px;
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #3aafa9;
+        color: white;
+        border-radius: 6px;
+      }
+      .back-btn:hover {
+        background-color: #2b7a78;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Classificació de Porters - {{ lliga.nom }}</h1>
+
+    <table>
+      <tr>
+        <th>Nom</th>
+        <th>Equip</th>
+        <th>Partits Jugats</th>
+        <th>Gols Encaixats</th>
+        <!--<th>Mitjana</th>-->
+      </tr>
+      {% for porter in porters %}
+      <tr>
+        <td>
+          <a href="{% url 'jugador_detall' porter.id %}">{{ porter.nom }}</a>
+        </td>
+        <td>{{ porter.equip.nom }}</td>
+        <td>{{ porter.partits_jugats }}</td>
+        <td>{{ porter.gols_encaixats }}</td>
+        <!--<td>{{ porter.mitjana_gols|floatformat:2 }}</td>-->
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="5">No hi ha porters registrats.</td>
+      </tr>
+      {% endfor %}
+    </table>
+
+    <a class="back-btn" href="{% url 'classificacio' lliga.id %}"
+      >⬅ Tornar a la classificació general</a
+    >
+  </body>
+</html>

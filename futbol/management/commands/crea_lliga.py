@@ -1,15 +1,14 @@
 from django.core.management.base import BaseCommand
 from django.utils import timezone
+from django.contrib.auth.models import User
 from faker import Faker
 from random import randint, choice
-
-# Asegúrate de que tus modelos estén importados
 from futbol.models import Lliga, Equip, Jugador, Partit, Event
 
-faker = Faker(["es_CA", "es_ES"])
+faker = Faker(["es_ES", "es_CA"])
 
 class Command(BaseCommand):
-    help = 'Crea una lliga amb equips i jugadors'
+    help = 'Crea una lliga amb equips, jugadors i partits falsos (reseteja abans la base de dades).'
 
     def add_arguments(self, parser):
         parser.add_argument('titol_lliga', nargs=1, type=str)
@@ -17,61 +16,115 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         titol_lliga = options['titol_lliga'][0]
 
-        # Comprovar si la lliga ja existeix
-        if Lliga.objects.filter(nom=titol_lliga).exists():
-            print(f"Aquesta lliga '{titol_lliga}' ja està creada. Posa un altre nom.")
-            return
+        # 🔥 1. Borrar todos los datos previos
+        print("🧹 Esborrant dades antigues...")
+        Event.objects.all().delete()
+        Partit.objects.all().delete()
+        Jugador.objects.all().delete()
+        Equip.objects.all().delete()
+        Lliga.objects.all().delete()
+        User.objects.all().delete()
+        print("✅ Dades antigues esborrades.")
 
-        lliga = Lliga(nom=titol_lliga)
-        lliga.save()
-        print(f"Creem la nova lliga: {titol_lliga}")
+        # 🔐 2. Crear superuser admin
+        print("👑 Creant superusuari...")
+        admin_user = User.objects.create_superuser(username="admin", password="admin", email="admin@example.com")
+        print("✅ Superusuari creat: admin / admin")
 
-        print("Creem equips...")
-        prefix_list = ["RCD", "Athletic", "Deportivo", "Unión Deportiva", "FC"]
-        noms_usats = set(Equip.objects.values_list('nom', flat=True))  # Equipos ya en la BD
+        # ⚽ 3. Crear lliga
+        lliga = Lliga.objects.create(nom=titol_lliga, pais=faker.country())
+        print(f"🏆 Creada la lliga: {titol_lliga}")
+
+        # 🏟️ 4. Crear equips
+        print("🏟️ Creant equips...")
+        prefix_list = ["RCD", "Athletic", "Deportivo", "Unión Deportiva", "FC", "Sporting", "Real"]
+        noms_usats = set()
 
         for _ in range(20):  # 20 equips
             while True:
                 ciutat = faker.city()
-                prefix = choice(prefix_list)  # Seleccionamos un prefijo aleatorio
-                nom = f"{prefix} {ciutat}" if prefix else ciutat
-                
-                if nom not in noms_usats:  # Si el nombre es único, lo usamos
+                prefix = choice(prefix_list)
+                nom = f"{prefix} {ciutat}"
+                if nom not in noms_usats:
                     noms_usats.add(nom)
                     break
 
-            any_fundacio = randint(1898, 1999)
-            equip = Equip(nom=nom, lliga=lliga, any_fundacio=any_fundacio, estadi=faker.company())
-            equip.save()
-            print(f"Equip creat: {nom}")
+            any_fundacio = randint(1890, 2005)
+            estadi = f"Estadi {faker.last_name()}"
+            president = faker.name()
 
-            print(f"   Creant jugadors per a {nom}...")
-            for _ in range(25):  # 25 jugadores por equipo
-                nom_jugador = faker.name()
-                posicio = choice(['PT', 'DF', 'MC', 'DL'])
-                dorsal = randint(1, 99)
-                nacionalitat = faker.country()
-                jugador = Jugador(nom=nom_jugador, posicio=posicio, equip=equip, dorsal=dorsal, nacionalitat=nacionalitat)
-                jugador.save()
+            equip = Equip.objects.create(
+                nom=nom,
+                lliga=lliga,
+                any_fundacio=any_fundacio,
+                estadi=estadi,
+                president=president,
+                ciutat=ciutat
+            )
+            print(f"   🟢 Equip creat: {nom} ({president})")
 
-        print("Creem partits de la lliga...")
-        for local in lliga.equips.all():
-            for visitant in lliga.equips.all():
-                if local != visitant:  # Evitar que un equipo juegue contra sí mismo
-                    partit = Partit(equip_local=local, equip_visitant=visitant, lliga=lliga, data=timezone.now())
-                    partit.save()
+            # ⚽ Crear jugadors per equip
+            for _ in range(25):
+                jugador = Jugador.objects.create(
+                    nom=faker.name(),
+                    equip=equip,
+                    posicio=choice(['PT', 'DF', 'MC', 'DL']),
+                    dorsal=randint(1, 99),
+                    nacionalitat=faker.country()
+                )
+
+        # 🏁 5. Crear partits
+        print("📅 Creant partits i events (gols)...")
+        equips = list(lliga.equips.all())
+        count_partits = 0
+
+        for local in equips:
+            for visitant in equips:
+                if local != visitant:
+                    partit = Partit.objects.create(
+                        equip_local=local,
+                        equip_visitant=visitant,
+                        lliga=lliga,
+                        data=timezone.now()
+                    )
+                    count_partits += 1
                     self.generar_goles(partit, local, visitant)
 
+        print(f"✅ Total partits creats: {count_partits}")
+        print("🎉 Dades falses creades correctament!")
+
     def generar_goles(self, partit, local, visitant):
-        max_goles = randint(0, 5)  # Número aleatorio de goles entre 0 y 5
+    # Obtén porters
+        porter_local = partit.equip_local.jugadors.filter(posicio='PT').first()
+        porter_visitant = partit.equip_visitant.jugadors.filter(posicio='PT').first()
 
-        for _ in range(max_goles):
+        # Generem un nombre aleatori de gols del partit
+        gols_partit = randint(0, 5)
+
+        for _ in range(gols_partit):
             equip_goleador = choice([local, visitant])
-            jugador = equip_goleador.jugadors.order_by('?').first()  # Selecciona un jugador al azar
+            jugador = equip_goleador.jugadors.order_by('?').first()
             if not jugador:
-                continue  # Si no hay jugadores, pasamos
-
+                continue
             minut = randint(1, 90)
-            evento = Event(tipus_esdeveniment='gol', jugador=jugador, partit=partit, minut=minut)
-            evento.save()
-            print(f"Gol de {jugador.nom} ({equip_goleador.nom}) al minut {minut}")
+            Event.objects.create(
+                tipus_esdeveniment='gol',
+                jugador=jugador,
+                partit=partit,
+                minut=minut
+            )
+
+            # Incrementem gols encaixats del porter contrari
+            if equip_goleador == local and porter_visitant:
+                porter_visitant.gols_encaixats += 1
+            elif equip_goleador == visitant and porter_local:
+                porter_local.gols_encaixats += 1
+
+        # Incrementem partits jugats
+        if porter_local:
+            porter_local.partits_jugats += 1
+            porter_local.save()
+        if porter_visitant:
+            porter_visitant.partits_jugats += 1
+            porter_visitant.save()
+

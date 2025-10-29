@@ -1,8 +1,47 @@
-<h1>Menu lliga</h>
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Menú Lliga</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        color: #333;
+        text-align: center;
+        padding: 50px;
+      }
+      h1 {
+        color: #4caf50;
+        margin-bottom: 30px;
+      }
+      form {
+        display: inline-block;
+        background-color: white;
+        padding: 20px 30px;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      }
+      input[type="submit"] {
+        background-color: #ff5722;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+      input[type="submit"]:hover {
+        background-color: #e64a19;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Menú Lliga</h1>
 
-<form method="post">
-	{% csrf_token %}
-	{{ form.as_p }}
- 
-	<input type="submit" name="submit">
-</form>
+    <form method="post">
+      {% csrf_token %} {{ form.as_p }}
+      <input type="submit" value="Veure classificació" />
+    </form>
+  </body>
+</html>

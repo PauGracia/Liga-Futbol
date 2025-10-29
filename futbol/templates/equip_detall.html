@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>{{ equip.nom }}</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        color: #333;
+        margin: 0;
+        padding: 20px;
+      }
+      h2 {
+        text-align: center;
+        color: #4caf50;
+      }
+      .equip-info {
+        width: 60%;
+        margin: 0 auto;
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      }
+      .jugadors {
+        margin-top: 30px;
+      }
+      ul {
+        list-style: none;
+        padding: 0;
+      }
+      li {
+        padding: 8px;
+        margin: 6px 0;
+        background-color: #fff;
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      a {
+        color: #2196f3;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      .back {
+        display: inline-block;
+        margin-top: 20px;
+        background-color: #ff5722;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        text-decoration: none;
+        transition: 0.3s;
+      }
+      .back:hover {
+        background-color: #e64a19;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>{{ equip.nom }}</h2>
+
+    <div class="equip-info">
+      <p><strong>President:</strong> {{ equip.president }}</p>
+      <p><strong>Estadi:</strong> {{ equip.estadi }}</p>
+      <p><strong>Ciutat:</strong> {{ equip.ciutat }}</p>
+      <p><strong>Fundat:</strong> {{ equip.any_fundacio }}</p>
+    </div>
+
+    <div class="jugadors">
+      <h3>Llista de jugadors</h3>
+      <ul>
+        {% for jugador in jugadors %}
+        <li>
+          <a href="{% url 'jugador_detall' jugador.id %}">
+            {{ jugador.nom }} - {{ jugador.get_posicio_display }}
+          </a>
+        </li>
+        {% empty %}
+        <li>No hi ha jugadors registrats.</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div style="text-align: center">
+      <a href="{% url 'classificacio' equip.lliga.id %}" class="back"
+        >Tornar a la classificació</a
+      >
+    </div>
+  </body>
+</html>
