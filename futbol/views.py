@@ -20,7 +20,8 @@ class JugadorForm(forms.ModelForm):
 
 def nou_jugador(request):
     if request.method == "POST":
-        form = JugadorForm(request.POST)
+        form = JugadorForm(request.POST, request.FILES)
+
         if form.is_valid():
             form.save()  # Guarda el nuevo jugador en la base de datos
             return redirect('menu')  # Redirige a la página principal o a donde desees

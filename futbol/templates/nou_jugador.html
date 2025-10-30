@@ -1,16 +1,14 @@
-
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>Nuevo Jugador</title>
-</head>
-<body>
+  </head>
+  <body>
     <h2>Agregar Jugador</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Guardar</button>
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %} {{ form.as_p }}
+      <input type="submit" value="Guardar" />
     </form>
     <a href="{% url 'menu' %}">Volver al menú</a>
-</body>
+  </body>
 </html>

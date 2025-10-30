@@ -40,7 +40,7 @@ class Jugador(models.Model):
     nacionalitat = models.CharField(max_length=50)
     partits_jugats = models.IntegerField(default=0)
     gols_encaixats = models.IntegerField(default=0)
-
+    foto = models.ImageField(upload_to='jugadors/', blank=True, null=True)
 
     def __str__(self):
         return f"{self.nom} ({self.equip.nom})"

@@ -1,6 +1,5 @@
-# futbol/urls.py
 from django.urls import path
-from . import views  # Importa las vistas de la misma app
+from . import views
 
 urlpatterns = [
     path('', views.menu, name='menu'),
@@ -10,7 +9,4 @@ urlpatterns = [
     path('taula_partits/<int:lliga_id>/', views.taula_partits, name='taula_partits'),
     path('equip/<int:equip_id>/', views.equip_detall, name='equip_detall'),
     path('classificacio_porters/<int:lliga_id>/', views.classificacio_porters, name='classificacio_porters'),
-
 ]
-
-

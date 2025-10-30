@@ -4,19 +4,43 @@ from django.contrib.auth.models import User
 from faker import Faker
 from random import randint, choice
 from futbol.models import Lliga, Equip, Jugador, Partit, Event
+from django.core.files import File
+import requests
+from io import BytesIO
+
 
 faker = Faker(["es_ES", "es_CA"])
 
+
 class Command(BaseCommand):
+
     help = 'Crea una lliga amb equips, jugadors i partits falsos (reseteja abans la base de dades).'
+
+    def get_random_avatar(self):
+        from django.core.files import File
+        import requests
+        from io import BytesIO
+        from random import randint
+
+        num = randint(1, 99)
+        url = f"https://randomuser.me/api/portraits/men/{num}.jpg"
+        try:
+            response = requests.get(url)
+            if response.status_code == 200:
+                return File(BytesIO(response.content), name=f"avatar_{num}.jpg")
+        except:
+            pass
+        return None
+
 
     def add_arguments(self, parser):
         parser.add_argument('titol_lliga', nargs=1, type=str)
 
     def handle(self, *args, **options):
         titol_lliga = options['titol_lliga'][0]
+        foto = self.get_random_avatar()
 
-        # 🔥 1. Borrar todos los datos previos
+        # 1. Borrar todos los datos previos
         print("🧹 Esborrant dades antigues...")
         Event.objects.all().delete()
         Partit.objects.all().delete()
@@ -26,16 +50,16 @@ class Command(BaseCommand):
         User.objects.all().delete()
         print("✅ Dades antigues esborrades.")
 
-        # 🔐 2. Crear superuser admin
+        # 2. Crear superuser admin
         print("👑 Creant superusuari...")
         admin_user = User.objects.create_superuser(username="admin", password="admin", email="admin@example.com")
         print("✅ Superusuari creat: admin / admin")
 
-        # ⚽ 3. Crear lliga
+        # 3. Crear lliga
         lliga = Lliga.objects.create(nom=titol_lliga, pais=faker.country())
         print(f"🏆 Creada la lliga: {titol_lliga}")
 
-        # 🏟️ 4. Crear equips
+        # 4. Crear equips
         print("🏟️ Creant equips...")
         prefix_list = ["RCD", "Athletic", "Deportivo", "Unión Deportiva", "FC", "Sporting", "Real"]
         noms_usats = set()
@@ -63,16 +87,34 @@ class Command(BaseCommand):
             )
             print(f"   🟢 Equip creat: {nom} ({president})")
 
-            # ⚽ Crear jugadors per equip
+            # Crear jugadors per equip
+            
             for _ in range(25):
+                # Contamos cuántos porteros tiene el equipo actualmente
+                num_porters = equip.jugadors.filter(posicio='PT').count()
+
+                # Elegimos la posición
+                if num_porters < 2:
+                    posicio = choice(['PT', 'DF', 'MC', 'DL'])  # PT permitido
+                else:
+                    posicio = choice(['DF', 'MC', 'DL'])  # Ya hay 2 porteros, no más
+
+                # Crear el jugador
                 jugador = Jugador.objects.create(
                     nom=faker.name(),
                     equip=equip,
-                    posicio=choice(['PT', 'DF', 'MC', 'DL']),
+                    posicio=posicio,
                     dorsal=randint(1, 99),
                     nacionalitat=faker.country()
                 )
 
+                  # Agregar foto aleatoria
+                foto = self.get_random_avatar()  # Función que descarga un avatar de randomuser.me
+                if foto:
+                    jugador.foto.save(f"jugador_{jugador.id}.jpg", foto, save=True)
+
+
+  
         # 🏁 5. Crear partits
         print("📅 Creant partits i events (gols)...")
         equips = list(lliga.equips.all())
