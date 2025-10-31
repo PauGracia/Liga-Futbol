@@ -1,6 +1,9 @@
 from django.core.management.base import BaseCommand
 from futbol.models import Lliga
 
+
+# Para borrar la bbdd en consola: python manage.py delete_lliga "nombre_liga" --force
+
 class Command(BaseCommand):
     help = "Borra una lliga i tots els seus equips, jugadors i partits."
 

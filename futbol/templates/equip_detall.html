@@ -11,54 +11,125 @@
         margin: 0;
         padding: 20px;
       }
+
       h2 {
         text-align: center;
         color: #4caf50;
       }
+
       .equip-info {
-        width: 60%;
+        width: 90%;
+        max-width: 700px;
         margin: 0 auto;
         background: white;
         padding: 20px;
         border-radius: 8px;
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
       }
+
       .jugadors {
         margin-top: 30px;
       }
-      ul {
-        list-style: none;
-        padding: 0;
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+        background-color: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
       }
-      li {
-        padding: 8px;
-        margin: 6px 0;
-        background-color: #fff;
-        border-radius: 4px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+      th,
+      td {
+        text-align: center;
+        padding: 10px;
       }
+
+      th {
+        background-color: #4caf50;
+        color: white;
+        font-weight: 600;
+      }
+
+      tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+
+      /* Columna de nombre alineada a la izquierda */
+      table tbody tr td:first-child {
+        text-align: left;
+        padding-left: 15px; /* un poco de espacio desde el borde */
+      }
+
+      tr:hover {
+        background-color: #e8f5e9;
+      }
+
       a {
         color: #2196f3;
         text-decoration: none;
       }
+
       a:hover {
         text-decoration: underline;
       }
-      .back {
-        display: inline-block;
-        margin-top: 20px;
-        background-color: #ff5722;
-        color: white;
-        padding: 10px 20px;
-        border-radius: 5px;
-        text-decoration: none;
-        transition: 0.3s;
+
+      .center {
+        text-align: center;
+        margin-top: 30px;
       }
+
+      /* Botones */
+      .center-div {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin: 30px 0;
+        gap: 10px;
+      }
+
+      .back {
+        font-size: 16px;
+        padding: 10px 20px;
+        background-color: transparent;
+        border: 2px solid #2e7d32;
+        color: #2e7d32;
+        border-radius: 6px;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.3s ease;
+      }
+
       .back:hover {
-        background-color: #e64a19;
+        background-color: #2e7d32;
+        color: white;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        body {
+          padding: 10px;
+        }
+
+        .equip-info {
+          width: 100%;
+          padding: 15px;
+        }
+
+        table {
+          font-size: 14px;
+        }
+
+        th,
+        td {
+          padding: 8px;
+        }
       }
     </style>
   </head>
+
   <body>
     <h2>{{ equip.nom }}</h2>
 
@@ -70,24 +141,47 @@
     </div>
 
     <div class="jugadors">
-      <h3>Llista de jugadors</h3>
-      <ul>
-        {% for jugador in jugadors %}
-        <li>
-          <a href="{% url 'jugador_detall' jugador.id %}">
-            {{ jugador.nom }} - {{ jugador.get_posicio_display }}
-          </a>
-        </li>
-        {% empty %}
-        <li>No hi ha jugadors registrats.</li>
-        {% endfor %}
-      </ul>
+      <h3 style="text-align: center">Llista de jugadors</h3>
+
+      {% if jugadors %}
+      <table>
+        <thead>
+          <tr>
+            <th>Nom</th>
+            <th>Posició</th>
+            <th>Partits</th>
+            <th>Gols</th>
+            <th>🟨</th>
+            <th>🟥</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for jugador in jugadors %}
+          <tr>
+            <td>
+              <a href="{% url 'jugador_detall' jugador.id %}">
+                {{ jugador.nom }}
+              </a>
+            </td>
+            <td>{{ jugador.get_posicio_display }}</td>
+            <td>{{ jugador.partits_jugats }}</td>
+            <td>{{ jugador.gols }}</td>
+
+            <td>{{ jugador.grogues }}</td>
+            <td>{{ jugador.vermelles }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <p style="text-align: center">No hi ha jugadors registrats.</p>
+      {% endif %}
     </div>
 
-    <div style="text-align: center">
-      <a href="{% url 'classificacio' equip.lliga.id %}" class="back"
-        >Tornar a la classificació</a
-      >
+    <div class="center">
+      <a href="{% url 'classificacio' equip.lliga.id %}" class="back">
+        Tornar a la classificació
+      </a>
     </div>
   </body>
 </html>

@@ -2,12 +2,14 @@ from django.core.management.base import BaseCommand
 from django.utils import timezone
 from django.contrib.auth.models import User
 from faker import Faker
-from random import randint, choice
+from random import randint, choice, sample
 from futbol.models import Lliga, Equip, Jugador, Partit, Event
 from django.core.files import File
 import requests
 from io import BytesIO
+from collections import defaultdict
 
+# Para lanzar y generar datos: python manage.py crea_lliga "nombre de liga"
 
 faker = Faker(["es_ES", "es_CA"])
 
@@ -101,7 +103,7 @@ class Command(BaseCommand):
 
                 # Crear el jugador
                 jugador = Jugador.objects.create(
-                    nom=faker.name(),
+                    nom=f"{faker.first_name_male()} {faker.last_name()}",
                     equip=equip,
                     posicio=posicio,
                     dorsal=randint(1, 99),
@@ -135,38 +137,86 @@ class Command(BaseCommand):
         print(f"✅ Total partits creats: {count_partits}")
         print("🎉 Dades falses creades correctament!")
 
+
+    
+
     def generar_goles(self, partit, local, visitant):
-    # Obtén porters
         porter_local = partit.equip_local.jugadors.filter(posicio='PT').first()
         porter_visitant = partit.equip_visitant.jugadors.filter(posicio='PT').first()
 
-        # Generem un nombre aleatori de gols del partit
-        gols_partit = randint(0, 5)
+        # Titulares y suplentes
+        jugadors_locals = list(partit.equip_local.jugadors.all())
+        jugadors_visitants = list(partit.equip_visitant.jugadors.all())
 
+        titulars_local = sample(jugadors_locals, min(11, len(jugadors_locals)))
+        titulars_visitants = sample(jugadors_visitants, min(11, len(jugadors_visitants)))
+
+        # Cambios
+        num_canvis_local = randint(0, 3)
+        num_canvis_visitant = randint(0, 3)
+        suplents_local = [j for j in jugadors_locals if j not in titulars_local]
+        suplents_visitants = [j for j in jugadors_visitants if j not in titulars_visitants]
+
+        canvis_local = sample(suplents_local, min(num_canvis_local, len(suplents_local)))
+        canvis_visitant = sample(suplents_visitants, min(num_canvis_visitant, len(suplents_visitants)))
+
+        jugadors_participants = titulars_local + canvis_local + titulars_visitants + canvis_visitant
+
+        # Incrementamos partidos jugados
+        for jugador in jugadors_participants:
+            jugador.partits_jugats += 1
+            jugador.save()
+
+        # Crear goles
+        gols_partit = randint(0, 5)
         for _ in range(gols_partit):
-            equip_goleador = choice([local, visitant])
-            jugador = equip_goleador.jugadors.order_by('?').first()
-            if not jugador:
-                continue
-            minut = randint(1, 90)
+            equip_golejador = choice([local, visitant])
+            jugador = choice(jugadors_participants)
             Event.objects.create(
                 tipus_esdeveniment='gol',
                 jugador=jugador,
                 partit=partit,
-                minut=minut
+                minut=randint(1, 90)
             )
 
-            # Incrementem gols encaixats del porter contrari
-            if equip_goleador == local and porter_visitant:
+            if equip_golejador == local and porter_visitant:
                 porter_visitant.gols_encaixats += 1
-            elif equip_goleador == visitant and porter_local:
+            elif equip_golejador == visitant and porter_local:
                 porter_local.gols_encaixats += 1
 
-        # Incrementem partits jugats
         if porter_local:
-            porter_local.partits_jugats += 1
             porter_local.save()
         if porter_visitant:
-            porter_visitant.partits_jugats += 1
             porter_visitant.save()
 
+        # -------------------
+        # Crear tarjetas
+        # Llevamos un conteo de amarillas por jugador
+        amarillas = defaultdict(int)
+
+        for jugador in jugadors_participants:
+            # Tarjeta roja directa: 1 entre 20
+            if randint(1, 20) == 1:
+                Event.objects.create(
+                    partit=partit,
+                    jugador=jugador,
+                    tipus_esdeveniment='targeta_vermella',
+                    minut=randint(1, 90)
+                )
+            # Tarjeta amarilla: 1 entre 10
+            if randint(1, 10) == 1:
+                amarillas[jugador] += 1
+                Event.objects.create(
+                    partit=partit,
+                    jugador=jugador,
+                    tipus_esdeveniment='targeta_groga',
+                    minut=randint(1, 90)
+                )
+                # Si ya tiene 2 amarillas → roja
+                if amarillas[jugador] == 2:
+                    Event.objects.create(
+                        partit=partit,
+                        jugador=jugador,
+                        tipus_esdeveniment='targeta_vermella',
+                        minut=randint(1, 90)
+                    )

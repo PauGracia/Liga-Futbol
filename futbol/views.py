@@ -3,10 +3,10 @@ from django import forms
 from futbol.models import *
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
-    
+
 from django.shortcuts import render, get_object_or_404, redirect
 
-from django.db.models import F, FloatField, ExpressionWrapper
+from django.db.models import F, FloatField, ExpressionWrapper, Count, Q 
 
 
     
@@ -112,42 +112,62 @@ def taula_partits(request, lliga_id):
 def classificacio(request, lliga_id):
     lliga = Lliga.objects.get(id=lliga_id)
     equips = lliga.equips.all()
-    classi = []
-    
-    # Calcular punts per a cada equip
+    classificacio = []
+
     for equip in equips:
         punts = 0
-        
-        # Calcular punts per partits locals
+        guanyats = 0
+        empatats = 0
+        perduts = 0
+        gols_favor = 0
+        gols_contra = 0
+
+        # Partits com a local
         for partit in lliga.partits.filter(equip_local=equip):
-            gols_local = partit.gols_local()
-            gols_visitant = partit.gols_visitant()
-            if gols_local > gols_visitant:
+            gf = partit.gols_local()
+            gc = partit.gols_visitant()
+            gols_favor += gf
+            gols_contra += gc
+
+            if gf > gc:
                 punts += 3
-            elif gols_local == gols_visitant:
+                guanyats += 1
+            elif gf == gc:
                 punts += 1
-        
-        # Calcular punts per partits visitants
+                empatats += 1
+            else:
+                perduts += 1
+
+        # Partits com a visitant
         for partit in lliga.partits.filter(equip_visitant=equip):
-            gols_local = partit.gols_local()
-            gols_visitant = partit.gols_visitant()
-            if gols_local < gols_visitant:
+            gf = partit.gols_visitant()
+            gc = partit.gols_local()
+            gols_favor += gf
+            gols_contra += gc
+
+            if gf > gc:
                 punts += 3
-            elif gols_local == gols_visitant:
+                guanyats += 1
+            elif gf == gc:
                 punts += 1
-        
-        # Afegim l'equip i els seus punts a la llista
-        classi.append((punts, equip))
+                empatats += 1
+            else:
+                perduts += 1
 
-    
-    # Ordenem la llista de forma descendent
-    classi.sort(reverse=True, key=lambda x: x[0])  # Ordenar per punts
-    
-    #return render(request, "classificacio.html", {"classificacio": classi})
-    return render(request, "classificacio.html", {"classificacio": classi, "lliga": lliga})
+        classificacio.append({
+            "equip": equip,
+            "punts": punts,
+            "guanyats": guanyats,
+            "empatats": empatats,
+            "perduts": perduts,
+            "gf": gols_favor,
+            "gc": gols_contra,
+        })
 
+    # Ordenem per punts, després per diferència de gols, després per gols a favor
+    classificacio.sort(key=lambda x: (x["punts"], x["gf"] - x["gc"], x["gf"]), reverse=True)
 
-
+    return render(request, "classificacio.html", {"classificacio": classificacio, "lliga": lliga})
 
 
 
@@ -171,18 +191,34 @@ def gestionar_equip(request):
 
 def equip_detall(request, equip_id):
     equip = get_object_or_404(Equip, id=equip_id)
-    jugadors = equip.jugadors.all()
+
+    jugadors = (
+        equip.jugadors
+        .annotate(
+            gols=Count('event', filter=Q(event__tipus_esdeveniment='gol')),
+            grogues=Count('event', filter=Q(event__tipus_esdeveniment='targeta_groga')),
+            vermelles=Count('event', filter=Q(event__tipus_esdeveniment='targeta_vermella')),
+        )
+    )
+
     return render(request, "equip_detall.html", {
         "equip": equip,
         "jugadors": jugadors
     })
 
 
+
 def jugador_detall(request, jugador_id):
-    jugador = get_object_or_404(Jugador, id=jugador_id)
+    jugador = Jugador.objects.filter(id=jugador_id).annotate(
+        gols_marcats=Count('event', filter=Q(event__tipus_esdeveniment='gol')),
+        targetes_grogues=Count('event', filter=Q(event__tipus_esdeveniment='targeta_groga')),
+        targetes_vermelles=Count('event', filter=Q(event__tipus_esdeveniment='targeta_vermella'))
+    ).first()
+
     return render(request, "jugador_detall.html", {
         "jugador": jugador
     })
+
 
 
 def classificacio_porters(request, lliga_id):

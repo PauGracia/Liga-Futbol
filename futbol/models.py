@@ -3,7 +3,6 @@ from django.contrib.auth.models import User
 # futbol/models.py
 
 
-
 class Lliga(models.Model):
     nom = models.CharField(max_length=100, unique=True)
     pais = models.CharField(max_length=50)

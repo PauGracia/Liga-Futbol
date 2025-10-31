@@ -3,113 +3,193 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Clasificación Lliga Iberica</title>
+    <title>Clasificación {{ lliga.nom }}</title>
     <style>
-      /* Estilo general para el body */
       body {
-        font-family: Arial, sans-serif;
+        font-family: "Segoe UI", Arial, sans-serif;
         background-color: #f4f4f4;
-        color: #333;
         margin: 0;
         padding: 0;
+        color: #333;
       }
 
-      /* Título principal */
       h1 {
         text-align: center;
-        color: #4caf50;
-        margin-top: 20px;
+        color: #2e7d32;
+        margin: 20px 0;
       }
 
-      /* Estilo para la lista ordenada */
-      ol {
-        width: 60%;
+      table {
+        width: 90%;
+        max-width: 900px;
         margin: 0 auto;
-        padding: 0;
-        list-style-type: decimal;
-        font-size: 18px;
+        border-collapse: collapse;
+        background-color: #fff;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        overflow: hidden;
       }
 
-      /* Estilo para cada elemento de la lista */
-      li {
-        display: flex;
-        justify-content: space-between; /* Nombre a la izquierda, puntos a la derecha */
-        align-items: center;
-        padding: 8px;
-        margin: 8px 0;
-        background-color: #ffffff;
-        border-radius: 5px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        transition: background-color 0.3s;
+      th,
+      td {
+        padding: 10px 8px;
+        text-align: center;
+        font-size: 16px;
       }
 
-      li:hover {
-        background-color: #e0f7fa;
+      th {
+        background-color: #2e7d32;
+        color: white;
+        font-weight: 600;
       }
 
-      /* Estilo para el nombre del equipo */
-      .equip-name {
+      tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+
+      tr:hover {
+        background-color: #e8f5e9;
+      }
+
+      td.equip {
+        text-align: left;
+        padding-left: 15px;
         font-weight: bold;
-        color: #2196f3;
+      }
+
+      td.equip a {
+        color: #1976d2;
         text-decoration: none;
       }
 
-      /* Estilo para los puntos */
-      .points {
-        font-style: italic;
-        color: #ff5722;
+      td.equip a:hover {
+        text-decoration: underline;
       }
 
       /* Botones */
       .button-div {
         display: flex;
-        flex-direction: column;
-        align-items: center;
-        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin: 30px 0;
+        gap: 10px;
       }
 
       .enlace {
-        font-size: 18px;
-        margin: 15px;
+        font-size: 16px;
         padding: 10px 20px;
-        background-color: #ff5722;
-        color: #2196f3;
-        border: none;
-        border-radius: 5px;
+        background-color: transparent;
+        border: 2px solid #2e7d32;
+        color: #2e7d32;
+        border-radius: 6px;
         cursor: pointer;
         text-decoration: none;
-        transition: background-color 0.3s ease;
+        transition: all 0.3s ease;
       }
 
       .enlace:hover {
-        background-color: #ffc107;
+        background-color: #2e7d32;
+        color: white;
+      }
+
+      /* 📱 Responsive */
+      @media (max-width: 768px) {
+        th,
+        td {
+          font-size: 14px;
+          padding: 6px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        table,
+        thead,
+        tbody,
+        th,
+        td,
+        tr {
+          display: block;
+        }
+
+        thead {
+          display: none;
+        }
+
+        tr {
+          background-color: #fff;
+          margin-bottom: 10px;
+          border-radius: 8px;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+          padding: 10px;
+        }
+
+        td {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          font-size: 14px;
+          padding: 6px 0;
+        }
+
+        td::before {
+          content: attr(data-label);
+          font-weight: bold;
+          color: #555;
+        }
+
+        /* Solo mostrar nombre y puntos */
+        td[data-label="GF"],
+        td[data-label="GC"],
+        td[data-label="G"],
+        td[data-label="E"],
+        td[data-label="P"] {
+          display: none;
+        }
       }
     </style>
   </head>
   <body>
-    <h1>{{ lliga.nom }}</h1>
+    <h1>Clasificación {{ lliga.nom }}</h1>
 
-    <ol>
-      {% for equip in classificacio %}
-      <li>
-        <a href="{% url 'equip_detall' equip.1.id %}" class="equip-name">
-          {{ equip.1.nom }}
-        </a>
-        <span class="points">{{ equip.0 }} punts</span>
-      </li>
-      {% endfor %}
-    </ol>
+    <table>
+      <thead>
+        <tr>
+          <th>Equipo</th>
+          <th>Pts</th>
+          <th>G</th>
+          <th>E</th>
+          <th>P</th>
+          <th>GF</th>
+          <th>GC</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in classificacio %}
+        <tr>
+          <td class="equip" data-label="Equipo">
+            <a href="{% url 'equip_detall' item.equip.id %}">
+              {{ item.equip.nom }}
+            </a>
+          </td>
+          <td data-label="Pts">{{ item.punts }}</td>
+          <td data-label="G">{{ item.guanyats }}</td>
+          <td data-label="E">{{ item.empatats }}</td>
+          <td data-label="P">{{ item.perduts }}</td>
+          <td data-label="GF">{{ item.gf }}</td>
+          <td data-label="GC">{{ item.gc }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
 
     <div class="button-div">
       <a class="enlace" href="{% url 'menu' %}">Volver</a>
-      <a class="enlace" href="{% url 'golejadors' lliga.id %}"
-        >Veure Golejadors</a
-      >
+      <a class="enlace" href="{% url 'golejadors' lliga.id %}">Golejadors</a>
       <a class="enlace" href="{% url 'taula_partits' lliga.id %}"
-        >Veure Taula de Partits</a
+        >Taula de Partits</a
       >
       <a class="enlace" href="{% url 'classificacio_porters' lliga.id %}"
-        >Classificació de porters</a
+        >Porters</a
       >
     </div>
   </body>
