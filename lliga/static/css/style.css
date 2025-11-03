@@ -1,0 +1,662 @@
+/* --- Menú Lliga --- */
+
+.menu-lliga-body {
+  font-family: "Segoe UI", Arial, sans-serif;
+  color: #333;
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+
+  /* Fondo con GIF */
+  background-image: url("../img/fondo.gif");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+.menu-lliga-title {
+  font-size: 3rem;
+  background: linear-gradient(90deg, #4caf50, #81c784);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4);
+  margin-bottom: 40px;
+  letter-spacing: 2px;
+}
+
+.menu-lliga-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  background-color: rgba(255, 255, 255, 0.85);
+  padding: 30px 40px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.menu-lliga-form select {
+  font-size: 1rem;
+  padding: 10px 15px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  outline: none;
+  transition: all 0.3s;
+  background-color: white;
+  cursor: pointer;
+}
+
+.menu-lliga-form select:hover {
+  border-color: #4caf50;
+  box-shadow: 0 0 8px rgba(76, 175, 80, 0.5);
+}
+
+.menu-lliga-submit {
+  background-color: #ff5722;
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s;
+  font-size: 1rem;
+  font-weight: bold;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+}
+
+.menu-lliga-submit:hover {
+  background-color: #e64a19;
+  transform: translateY(-2px);
+}
+
+/* --- Responsivo --- */
+@media (max-width: 480px) {
+  .menu-lliga-title {
+    font-size: 2.2rem;
+  }
+
+  .menu-lliga-form {
+    padding: 20px 25px;
+    gap: 15px;
+  }
+
+  .menu-lliga-form select,
+  .menu-lliga-submit {
+    font-size: 0.9rem;
+    padding: 8px 12px;
+  }
+}
+
+/*--- CLASSIFICACIÓ PAGE ---*/
+.classificacio-page {
+  font-family: "Segoe UI", Arial, sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 0;
+  color: #333;
+}
+
+/* --- Título --- */
+.classificacio-page h1 {
+  text-align: center;
+  color: #2e7d32;
+  margin: 20px 0;
+}
+
+/* --- Tabla --- */
+.classificacio-page table {
+  width: 90%;
+  max-width: 900px;
+  margin: 0 auto;
+  border-collapse: collapse;
+  background-color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.classificacio-page th,
+.classificacio-page td {
+  padding: 10px 8px;
+  text-align: center;
+  font-size: 16px;
+}
+
+.classificacio-page th {
+  background-color: #2e7d32;
+  color: white;
+  font-weight: 600;
+}
+
+.classificacio-page tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.classificacio-page tr:hover {
+  background-color: #e8f5e9;
+}
+
+.classificacio-page td.equip {
+  text-align: left;
+  padding-left: 15px;
+  font-weight: bold;
+}
+
+.classificacio-page td.equip a {
+  color: #1976d2;
+  text-decoration: none;
+}
+
+.classificacio-page td.equip a:hover {
+  text-decoration: underline;
+}
+
+/* --- Botones --- */
+.classificacio-page .button-div {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 30px 0;
+  gap: 10px;
+}
+
+.classificacio-page .enlace {
+  font-size: 16px;
+  padding: 10px 20px;
+  background-color: transparent;
+  border: 2px solid #2e7d32;
+  color: #2e7d32;
+  border-radius: 6px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.classificacio-page .enlace:hover {
+  background-color: #2e7d32;
+  color: white;
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  .classificacio-page th,
+  .classificacio-page td {
+    font-size: 14px;
+    padding: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .classificacio-page table,
+  .classificacio-page thead,
+  .classificacio-page tbody,
+  .classificacio-page th,
+  .classificacio-page td,
+  .classificacio-page tr {
+    display: block;
+  }
+
+  .classificacio-page thead {
+    display: none;
+  }
+
+  .classificacio-page tr {
+    background-color: #fff;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+  }
+
+  .classificacio-page td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    padding: 6px 0;
+  }
+
+  .classificacio-page td::before {
+    content: attr(data-label);
+    font-weight: bold;
+    color: #555;
+  }
+
+  /* Solo mostrar nombre y puntos */
+  .classificacio-page td[data-label="GF"],
+  .classificacio-page td[data-label="GC"],
+  .classificacio-page td[data-label="G"],
+  .classificacio-page td[data-label="E"],
+  .classificacio-page td[data-label="P"] {
+    display: none;
+  }
+}
+
+/*--- EQUIP PAGE ---*/
+.equip-page {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  color: #333;
+  margin: 0;
+  padding: 20px;
+}
+
+.equip-page h2 {
+  text-align: center;
+  color: #4caf50;
+}
+
+.equip-page .equip-info {
+  width: 90%;
+  max-width: 700px;
+  margin: 0 auto;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.equip-page .jugadors {
+  margin-top: 30px;
+}
+
+.equip-page table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.equip-page th,
+.equip-page td {
+  text-align: center;
+  padding: 10px;
+}
+
+.equip-page th {
+  background-color: #4caf50;
+  color: white;
+  font-weight: 600;
+}
+
+.equip-page tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.equip-page table tbody tr td:first-child {
+  text-align: left;
+  padding-left: 15px;
+}
+
+.equip-page tr:hover {
+  background-color: #e8f5e9;
+}
+
+.equip-page a {
+  color: #2196f3;
+  text-decoration: none;
+}
+
+.equip-page a:hover {
+  text-decoration: underline;
+}
+
+.equip-page .center {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.equip-page .back {
+  font-size: 16px;
+  padding: 10px 20px;
+  background-color: transparent;
+  border: 2px solid #2e7d32;
+  color: #2e7d32;
+  border-radius: 6px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.equip-page .back:hover {
+  background-color: #2e7d32;
+  color: white;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .equip-page {
+    padding: 10px;
+  }
+
+  .equip-page .equip-info {
+    width: 100%;
+    padding: 15px;
+  }
+
+  .equip-page table {
+    font-size: 14px;
+  }
+
+  .equip-page th,
+  .equip-page td {
+    padding: 8px;
+  }
+}
+
+/*--- JUGADOR PAGE ---*/
+.jugador-page {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  color: #333;
+  margin: 0;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.jugador-page .card {
+  width: 400px;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  text-align: center;
+}
+
+.jugador-page .card img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 15px;
+  border: 3px solid #4caf50;
+}
+
+.jugador-page h2 {
+  color: #4caf50;
+  margin-bottom: 15px;
+}
+
+.jugador-page p {
+  font-size: 16px;
+  margin: 8px 0;
+}
+
+.jugador-page .stats {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 15px;
+  padding: 10px 0;
+  border-top: 1px solid #ddd;
+}
+
+.jugador-page .stats div {
+  text-align: center;
+}
+
+.jugador-page a {
+  color: #2196f3;
+  text-decoration: none;
+}
+
+.jugador-page a:hover {
+  text-decoration: underline;
+}
+
+/* Botones */
+.jugador-page .centerJugador {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 30px 0;
+}
+
+.jugador-page .back {
+  font-size: 16px;
+  padding: 10px 20px;
+  background-color: transparent;
+  border: 2px solid #2e7d32;
+  color: #2e7d32;
+  border-radius: 6px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.jugador-page .back:hover {
+  background-color: #2e7d32;
+  color: white;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .jugador-page {
+    padding: 10px;
+  }
+
+  .jugador-page .card {
+    width: 100%;
+    padding: 15px;
+  }
+}
+
+/*--- CLASIFICACIO PAGE (Golejadors y Porters) ---*/
+.classificacio-page {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  color: #333;
+  padding: 20px;
+}
+
+.classificacio-page h2 {
+  text-align: center;
+  color: #2e7d32;
+  margin-bottom: 20px;
+}
+
+.classificacio-page table {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  border-collapse: collapse;
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.classificacio-page th,
+.classificacio-page td {
+  text-align: center;
+  padding: 10px;
+}
+
+.classificacio-page th {
+  background-color: #4caf50;
+  color: white;
+  font-weight: 600;
+}
+
+.classificacio-page tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.classificacio-page tr:hover {
+  background-color: #e8f5e9;
+}
+
+/* Primera columna alineada a la izquierda (nombres de jugadores o porteros) */
+.classificacio-page table tbody tr td:first-child {
+  text-align: left;
+  padding-left: 15px;
+}
+
+.classificacio-page a {
+  color: #2196f3;
+  text-decoration: none;
+}
+
+.classificacio-page a:hover {
+  text-decoration: underline;
+}
+
+/* Botones */
+.classificacio-page .back {
+  display: inline-block;
+  font-size: 16px;
+  padding: 10px 20px;
+  background-color: transparent;
+  border: 2px solid #2e7d32;
+  color: #2e7d32;
+  border-radius: 6px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.classificacio-page .back:hover {
+  background-color: #2e7d32;
+  color: white;
+}
+
+/* Contenedor centrado para botones */
+.classificacio-page .center {
+  text-align: center;
+  margin-top: 30px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .classificacio-page table {
+    font-size: 14px;
+  }
+
+  .classificacio-page th,
+  .classificacio-page td {
+    padding: 8px;
+  }
+
+  .classificacio-page .back {
+    font-size: 14px;
+    padding: 8px 16px;
+  }
+}
+
+/* --- Tablas taula_partits --- */
+.taula-partits {
+  width: 90%;
+  max-width: 900px;
+  margin: 20px auto;
+  border-collapse: collapse;
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.taula-partits th,
+.taula-partits td {
+  padding: 10px;
+  text-align: center;
+  border: 1px solid #ddd;
+}
+
+.taula-partits th {
+  background-color: #4caf50;
+  color: white;
+  font-weight: 600;
+}
+
+.taula-partits tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.taula-partits tr:hover {
+  background-color: #e8f5e9;
+}
+
+/* Primera columna alineada a la izquierda */
+.taula-partits td:first-child {
+  text-align: left;
+  padding-left: 15px;
+}
+
+/* Botón de volver */
+.taula-partits-buttons .back {
+  display: inline-block;
+  font-size: 16px;
+  padding: 10px 20px;
+  background-color: transparent;
+  border: 2px solid #2e7d32;
+  color: #2e7d32;
+  border-radius: 6px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.taula-partits-buttons .back:hover {
+  background-color: #2e7d32;
+  color: white;
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  .taula-partits th,
+  .taula-partits td {
+    font-size: 14px;
+    padding: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .taula-partits,
+  .taula-partits thead,
+  .taula-partits tbody,
+  .taula-partits th,
+  .taula-partits td,
+  .taula-partits tr {
+    display: block;
+  }
+
+  .taula-partits thead {
+    display: none;
+  }
+
+  .taula-partits tr {
+    margin-bottom: 10px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+  }
+
+  .taula-partits td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+  }
+
+  .taula-partits td::before {
+    content: attr(data-label);
+    font-weight: bold;
+    color: #555;
+  }
+
+  /* Ocultamos columnas opcionales si se quiere simplificar */
+  .taula-partits td[data-label="GF"],
+  .taula-partits td[data-label="GC"] {
+    display: none;
+  }
+}

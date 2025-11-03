@@ -144,14 +144,12 @@ class Command(BaseCommand):
         porter_local = partit.equip_local.jugadors.filter(posicio='PT').first()
         porter_visitant = partit.equip_visitant.jugadors.filter(posicio='PT').first()
 
-        # Titulares y suplentes
         jugadors_locals = list(partit.equip_local.jugadors.all())
         jugadors_visitants = list(partit.equip_visitant.jugadors.all())
 
         titulars_local = sample(jugadors_locals, min(11, len(jugadors_locals)))
         titulars_visitants = sample(jugadors_visitants, min(11, len(jugadors_visitants)))
 
-        # Cambios
         num_canvis_local = randint(0, 3)
         num_canvis_visitant = randint(0, 3)
         suplents_local = [j for j in jugadors_locals if j not in titulars_local]
@@ -160,28 +158,53 @@ class Command(BaseCommand):
         canvis_local = sample(suplents_local, min(num_canvis_local, len(suplents_local)))
         canvis_visitant = sample(suplents_visitants, min(num_canvis_visitant, len(suplents_visitants)))
 
-        jugadors_participants = titulars_local + canvis_local + titulars_visitants + canvis_visitant
+        jugadors_participants_local = titulars_local + canvis_local
+        jugadors_participants_visitant = titulars_visitants + canvis_visitant
 
-        # Incrementamos partidos jugados
-        for jugador in jugadors_participants:
+        # Asegurar que los porteros siempre cuentan como participantes
+        if porter_local and porter_local not in jugadors_participants_local:
+            jugadors_participants_local.append(porter_local)
+        if porter_visitant and porter_visitant not in jugadors_participants_visitant:
+            jugadors_participants_visitant.append(porter_visitant)
+
+        # Incrementar partidos jugados
+        for jugador in jugadors_participants_local + jugadors_participants_visitant:
             jugador.partits_jugats += 1
             jugador.save()
 
-        # Crear goles
-        gols_partit = randint(0, 5)
-        for _ in range(gols_partit):
-            equip_golejador = choice([local, visitant])
-            jugador = choice(jugadors_participants)
+        # ⚽ Determinar número de goles por equipo
+        gols_local = randint(0, 5)
+        gols_visitant = randint(0, 5)
+
+        # Guardar resultados en el partido (si el modelo tiene esos campos)
+        if hasattr(partit, 'gols_local'):
+            partit.gols_local = gols_local
+        if hasattr(partit, 'gols_visitant'):
+            partit.gols_visitant = gols_visitant
+        partit.save()
+
+        # Crear eventos de gol locales
+        for _ in range(gols_local):
+            golejador = choice([j for j in jugadors_participants_local if j.posicio != 'PT'])
             Event.objects.create(
                 tipus_esdeveniment='gol',
-                jugador=jugador,
+                jugador=golejador,
                 partit=partit,
                 minut=randint(1, 90)
             )
-
-            if equip_golejador == local and porter_visitant:
+            if porter_visitant:
                 porter_visitant.gols_encaixats += 1
-            elif equip_golejador == visitant and porter_local:
+
+        # Crear eventos de gol visitantes
+        for _ in range(gols_visitant):
+            golejador = choice([j for j in jugadors_participants_visitant if j.posicio != 'PT'])
+            Event.objects.create(
+                tipus_esdeveniment='gol',
+                jugador=golejador,
+                partit=partit,
+                minut=randint(1, 90)
+            )
+            if porter_local:
                 porter_local.gols_encaixats += 1
 
         if porter_local:
@@ -189,13 +212,9 @@ class Command(BaseCommand):
         if porter_visitant:
             porter_visitant.save()
 
-        # -------------------
-        # Crear tarjetas
-        # Llevamos un conteo de amarillas por jugador
+        # 🟨 Tarjetas
         amarillas = defaultdict(int)
-
-        for jugador in jugadors_participants:
-            # Tarjeta roja directa: 1 entre 20
+        for jugador in jugadors_participants_local + jugadors_participants_visitant:
             if randint(1, 20) == 1:
                 Event.objects.create(
                     partit=partit,
@@ -203,7 +222,6 @@ class Command(BaseCommand):
                     tipus_esdeveniment='targeta_vermella',
                     minut=randint(1, 90)
                 )
-            # Tarjeta amarilla: 1 entre 10
             if randint(1, 10) == 1:
                 amarillas[jugador] += 1
                 Event.objects.create(
@@ -212,7 +230,6 @@ class Command(BaseCommand):
                     tipus_esdeveniment='targeta_groga',
                     minut=randint(1, 90)
                 )
-                # Si ya tiene 2 amarillas → roja
                 if amarillas[jugador] == 2:
                     Event.objects.create(
                         partit=partit,

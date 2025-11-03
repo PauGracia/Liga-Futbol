@@ -1,196 +1,58 @@
 <!DOCTYPE html>
 <html lang="es">
+  {% load static %}
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Clasificación {{ lliga.nom }}</title>
-    <style>
-      body {
-        font-family: "Segoe UI", Arial, sans-serif;
-        background-color: #f4f4f4;
-        margin: 0;
-        padding: 0;
-        color: #333;
-      }
-
-      h1 {
-        text-align: center;
-        color: #2e7d32;
-        margin: 20px 0;
-      }
-
-      table {
-        width: 90%;
-        max-width: 900px;
-        margin: 0 auto;
-        border-collapse: collapse;
-        background-color: #fff;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        border-radius: 8px;
-        overflow: hidden;
-      }
-
-      th,
-      td {
-        padding: 10px 8px;
-        text-align: center;
-        font-size: 16px;
-      }
-
-      th {
-        background-color: #2e7d32;
-        color: white;
-        font-weight: 600;
-      }
-
-      tr:nth-child(even) {
-        background-color: #f9f9f9;
-      }
-
-      tr:hover {
-        background-color: #e8f5e9;
-      }
-
-      td.equip {
-        text-align: left;
-        padding-left: 15px;
-        font-weight: bold;
-      }
-
-      td.equip a {
-        color: #1976d2;
-        text-decoration: none;
-      }
-
-      td.equip a:hover {
-        text-decoration: underline;
-      }
-
-      /* Botones */
-      .button-div {
-        display: flex;
-        justify-content: center;
-        flex-wrap: wrap;
-        margin: 30px 0;
-        gap: 10px;
-      }
-
-      .enlace {
-        font-size: 16px;
-        padding: 10px 20px;
-        background-color: transparent;
-        border: 2px solid #2e7d32;
-        color: #2e7d32;
-        border-radius: 6px;
-        cursor: pointer;
-        text-decoration: none;
-        transition: all 0.3s ease;
-      }
-
-      .enlace:hover {
-        background-color: #2e7d32;
-        color: white;
-      }
-
-      /* 📱 Responsive */
-      @media (max-width: 768px) {
-        th,
-        td {
-          font-size: 14px;
-          padding: 6px;
-        }
-      }
-
-      @media (max-width: 480px) {
-        table,
-        thead,
-        tbody,
-        th,
-        td,
-        tr {
-          display: block;
-        }
-
-        thead {
-          display: none;
-        }
-
-        tr {
-          background-color: #fff;
-          margin-bottom: 10px;
-          border-radius: 8px;
-          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-          padding: 10px;
-        }
-
-        td {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          font-size: 14px;
-          padding: 6px 0;
-        }
-
-        td::before {
-          content: attr(data-label);
-          font-weight: bold;
-          color: #555;
-        }
-
-        /* Solo mostrar nombre y puntos */
-        td[data-label="GF"],
-        td[data-label="GC"],
-        td[data-label="G"],
-        td[data-label="E"],
-        td[data-label="P"] {
-          display: none;
-        }
-      }
-    </style>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
   </head>
+
   <body>
-    <h1>Clasificación {{ lliga.nom }}</h1>
+    <div class="classificacio-page">
+      <h1>Clasificación {{ lliga.nom }}</h1>
 
-    <table>
-      <thead>
-        <tr>
-          <th>Equipo</th>
-          <th>Pts</th>
-          <th>G</th>
-          <th>E</th>
-          <th>P</th>
-          <th>GF</th>
-          <th>GC</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for item in classificacio %}
-        <tr>
-          <td class="equip" data-label="Equipo">
-            <a href="{% url 'equip_detall' item.equip.id %}">
-              {{ item.equip.nom }}
-            </a>
-          </td>
-          <td data-label="Pts">{{ item.punts }}</td>
-          <td data-label="G">{{ item.guanyats }}</td>
-          <td data-label="E">{{ item.empatats }}</td>
-          <td data-label="P">{{ item.perduts }}</td>
-          <td data-label="GF">{{ item.gf }}</td>
-          <td data-label="GC">{{ item.gc }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+      <table>
+        <thead>
+          <tr>
+            <th>Equipo</th>
+            <th>Pts</th>
+            <th>G</th>
+            <th>E</th>
+            <th>P</th>
+            <th>GF</th>
+            <th>GC</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in classificacio %}
+          <tr>
+            <td class="equip" data-label="Equipo">
+              <a href="{% url 'equip_detall' item.equip.id %}">
+                {{ item.equip.nom }}
+              </a>
+            </td>
+            <td data-label="Pts">{{ item.punts }}</td>
+            <td data-label="G">{{ item.guanyats }}</td>
+            <td data-label="E">{{ item.empatats }}</td>
+            <td data-label="P">{{ item.perduts }}</td>
+            <td data-label="GF">{{ item.gf }}</td>
+            <td data-label="GC">{{ item.gc }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
 
-    <div class="button-div">
-      <a class="enlace" href="{% url 'menu' %}">Volver</a>
-      <a class="enlace" href="{% url 'golejadors' lliga.id %}">Golejadors</a>
-      <a class="enlace" href="{% url 'taula_partits' lliga.id %}"
-        >Taula de Partits</a
-      >
-      <a class="enlace" href="{% url 'classificacio_porters' lliga.id %}"
-        >Porters</a
-      >
+      <div class="button-div">
+        <a class="enlace" href="{% url 'menu' %}">Volver</a>
+        <a class="enlace" href="{% url 'golejadors' lliga.id %}">Golejadors</a>
+        <a class="enlace" href="{% url 'taula_partits' lliga.id %}">
+          Taula de Partits
+        </a>
+        <a class="enlace" href="{% url 'classificacio_porters' lliga.id %}">
+          Porters
+        </a>
+      </div>
     </div>
   </body>
 </html>

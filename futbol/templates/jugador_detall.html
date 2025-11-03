@@ -4,143 +4,62 @@
 
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{{ jugador.nom }}</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        background-color: #f4f4f4;
-        color: #333;
-        margin: 0;
-        padding: 20px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-      }
-
-      .card {
-        width: 400px;
-        background: white;
-        padding: 20px;
-        border-radius: 12px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-        text-align: center;
-      }
-
-      .card img {
-        width: 150px;
-        height: 150px;
-        border-radius: 50%;
-        object-fit: cover;
-        margin-bottom: 15px;
-        border: 3px solid #4caf50;
-      }
-
-      h2 {
-        color: #4caf50;
-        margin-bottom: 15px;
-      }
-
-      p {
-        font-size: 16px;
-        margin: 8px 0;
-      }
-
-      .stats {
-        display: flex;
-        justify-content: space-around;
-        margin-top: 15px;
-        padding: 10px 0;
-        border-top: 1px solid #ddd;
-      }
-
-      .stats div {
-        text-align: center;
-      }
-
-      a {
-        color: #2196f3;
-        text-decoration: none;
-      }
-
-      a:hover {
-        text-decoration: underline;
-      }
-
-      /* Botones */
-      .centerJugador {
-        display: flex;
-        justify-content: center;
-        flex-wrap: wrap;
-        margin: 30px 0;
-        gap: 10px;
-      }
-
-      .back {
-        font-size: 16px;
-        padding: 10px 20px;
-        background-color: transparent;
-        border: 2px solid #2e7d32;
-        color: #2e7d32;
-        border-radius: 6px;
-        cursor: pointer;
-        text-decoration: none;
-        transition: all 0.3s ease;
-      }
-
-      .back:hover {
-        background-color: #2e7d32;
-        color: white;
-      }
-    </style>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
   </head>
 
   <body>
-    <div class="card">
-      {% if jugador.foto %}
-      <img src="{{ jugador.foto.url }}" alt="{{ jugador.nom }}" />
-      {% else %}
-      <img src="{% static 'img/default_player.png' %}" alt="Jugador sin foto" />
-      {% endif %}
+    <div class="jugador-page">
+      <div class="card">
+        {% if jugador.foto %}
+        <img src="{{ jugador.foto.url }}" alt="{{ jugador.nom }}" />
+        {% else %}
+        <img
+          src="{% static 'img/default_player.png' %}"
+          alt="Jugador sin foto"
+        />
+        {% endif %}
 
-      <h2>{{ jugador.nom }}</h2>
+        <h2>{{ jugador.nom }}</h2>
 
-      <p>
-        <strong>Equip:</strong>
-        <a href="{% url 'equip_detall' jugador.equip.id %}"
-          >{{ jugador.equip.nom }}</a
-        >
-      </p>
-      <p><strong>Posició:</strong> {{ jugador.get_posicio_display }}</p>
-      <p><strong>Dorsal:</strong> {{ jugador.dorsal }}</p>
-      <p><strong>Nacionalitat:</strong> {{ jugador.nacionalitat }}</p>
+        <p>
+          <strong>Equip:</strong>
+          <a href="{% url 'equip_detall' jugador.equip.id %}"
+            >{{ jugador.equip.nom }}</a
+          >
+        </p>
+        <p><strong>Posició:</strong> {{ jugador.get_posicio_display }}</p>
+        <p><strong>Dorsal:</strong> {{ jugador.dorsal }}</p>
+        <p><strong>Nacionalitat:</strong> {{ jugador.nacionalitat }}</p>
 
-      {% if jugador.posicio == "PT" %}
-      <p><strong>Gols encaixats:</strong> {{ jugador.gols_encaixats }}</p>
-      {% else %}
-      <p><strong>Gols marcats:</strong> {{ jugador.gols_marcats }}</p>
-      {% endif %}
+        {% if jugador.posicio == "PT" %}
+        <p><strong>Gols encaixats:</strong> {{ jugador.gols_encaixats }}</p>
+        {% else %}
+        <p><strong>Gols marcats:</strong> {{ jugador.gols_marcats }}</p>
+        {% endif %}
 
-      <div class="stats">
-        <div>
-          <strong>Partits jugats</strong><br />
-          {{ jugador.partits_jugats }}
-        </div>
-        <div>
-          <strong>🟨</strong><br />
-          {{ jugador.targetes_grogues }}
-        </div>
-        <div>
-          <strong>🟥</strong><br />
-          {{ jugador.targetes_vermelles }}
+        <div class="stats">
+          <div>
+            <strong>Partits jugats</strong><br />
+            {{ jugador.partits_jugats }}
+          </div>
+          <div>
+            <strong>🟨</strong><br />
+            {{ jugador.targetes_grogues }}
+          </div>
+          <div>
+            <strong>🟥</strong><br />
+            {{ jugador.targetes_vermelles }}
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="centerJugador">
-      <a href="{% url 'equip_detall' jugador.equip.id %}" class="back"
-        >Tornar a l'equip</a
-      >
+      <div class="centerJugador">
+        <a href="{% url 'equip_detall' jugador.equip.id %}" class="back">
+          Tornar a l'equip
+        </a>
+      </div>
     </div>
   </body>
 </html>

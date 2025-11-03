@@ -1,88 +1,56 @@
 <!DOCTYPE html>
 <html lang="ca">
+  {% load static %}
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Classificació de Porters - {{ lliga.nom }}</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        background-color: #f7f7f7;
-        text-align: center;
-      }
-      h1 {
-        color: #2b7a78;
-      }
-      table {
-        width: 80%;
-        margin: 20px auto;
-        border-collapse: collapse;
-        background-color: white;
-        border-radius: 8px;
-        overflow: hidden;
-      }
-      th,
-      td {
-        padding: 12px;
-        border: 1px solid #ddd;
-      }
-      th {
-        background-color: #3aafa9;
-        color: white;
-        text-transform: uppercase;
-      }
-      tr:nth-child(even) {
-        background-color: #e9f5f5;
-      }
-      a {
-        color: #2b7a78;
-        text-decoration: none;
-      }
-      a:hover {
-        text-decoration: underline;
-      }
-      .back-btn {
-        margin-top: 20px;
-        display: inline-block;
-        padding: 10px 20px;
-        background-color: #3aafa9;
-        color: white;
-        border-radius: 6px;
-      }
-      .back-btn:hover {
-        background-color: #2b7a78;
-      }
-    </style>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
   </head>
-  <body>
-    <h1>Classificació de Porters - {{ lliga.nom }}</h1>
+  <body class="classificacio-page">
+    <div class="classificacio-page">
+      <h2>Classificació de Porters - {{ lliga.nom }}</h2>
 
-    <table>
-      <tr>
-        <th>Nom</th>
-        <th>Equip</th>
-        <th>Partits Jugats</th>
-        <th>Gols Encaixats</th>
-        <!--<th>Mitjana</th>-->
-      </tr>
-      {% for porter in porters %}
-      <tr>
-        <td>
-          <a href="{% url 'jugador_detall' porter.id %}">{{ porter.nom }}</a>
-        </td>
-        <td>{{ porter.equip.nom }}</td>
-        <td>{{ porter.partits_jugats }}</td>
-        <td>{{ porter.gols_encaixats }}</td>
-        <!--<td>{{ porter.mitjana_gols|floatformat:2 }}</td>-->
-      </tr>
-      {% empty %}
-      <tr>
-        <td colspan="5">No hi ha porters registrats.</td>
-      </tr>
-      {% endfor %}
-    </table>
+      <table>
+        <thead>
+          <tr>
+            <th>Posició</th>
+            <th>Porter</th>
+            <th>Equip</th>
+            <th>Partits Jugats</th>
+            <th>Gols Encaixats</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for porter in porters %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>
+              <a href="{% url 'jugador_detall' porter.id %}"
+                >{{ porter.nom }}</a
+              >
+            </td>
+            <td class="equip" data-label="Equipo">
+              <a href="{% url 'equip_detall' porter.equip.id %}"
+                >{{ porter.equip.nom }}</a
+              >
+            </td>
+            <td>{{ porter.partits_jugats }}</td>
+            <td>{{ porter.gols_encaixats }}</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="5" class="text-center">No hi ha porters registrats</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
 
-    <a class="back-btn" href="{% url 'classificacio' lliga.id %}"
-      >⬅ Tornar a la classificació general</a
-    >
+      <div class="center">
+        <a href="{% url 'classificacio' lliga.id %}" class="back">
+          ⬅ Tornar a la classificació general
+        </a>
+      </div>
+    </div>
   </body>
 </html>
