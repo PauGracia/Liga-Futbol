@@ -12,7 +12,7 @@ class Lliga(models.Model):
 
 
 class Equip(models.Model):
-    nom = models.CharField(max_length=100, unique=True)
+    nom = models.CharField(max_length=100)
     lliga = models.ForeignKey(Lliga, on_delete=models.CASCADE, related_name="equips")
     any_fundacio = models.IntegerField()
     president = models.CharField(max_length=100, blank=True, null=True)
