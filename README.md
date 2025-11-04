@@ -1,7 +1,11 @@
-# ⚽ Gestión de Liga de Fútbol (Django)
+# ⚽ Liga-Fútbol – Gestión de Ligas con Django
+
+> Plataforma web para administrar equipos, jugadores, partidos y clasificaciones.
 
 > **Estado del proyecto:** 🧩 _En desarrollo_  
 > Aplicación web construida con **Django** para gestionar una liga de fútbol: equipos, jugadores, partidos, resultados y clasificación general.
+
+![Clasificación](docs/clasificacion.png)
 
 ---
 
@@ -9,8 +13,7 @@
 
 Este proyecto tiene como objetivo crear una **plataforma de administración de ligas de fútbol** donde los usuarios puedan:
 
-- Registrar equipos y jugadores.
-- Programar y gestionar partidos.
+- Registrar equipos, jugadores, partidos y eventos.
 - Registrar resultados y generar clasificaciones automáticas.
 - Consultar estadísticas de equipos y jugadores.
 
@@ -24,6 +27,15 @@ La aplicación está siendo desarrollada con **Django** (Python) como framework 
 - Implementar un sistema completo de **CRUD** (crear, leer, actualizar, eliminar).
 - Trabajar con **relaciones entre modelos** (equipos ↔ jugadores ↔ partidos).
 - Mejorar el diseño mediante **templates y estilos personalizados**.
+
+---
+
+### 📦 Requisitos previos
+
+- Python >= 3.10
+- Django >= 4.2
+- pip >= 22
+- (opcional) PostgreSQL o SQLite
 
 ---
 
@@ -89,7 +101,20 @@ python manage.py migrate
 python manage.py crea_lliga "Nombre de tu Liga"
 ```
 
-_Este comando creará una liga con equipos y jugadores de ejemplo para pruebas_
+_Este comando creará una liga con equipos y jugadores de ejemplo para pruebas. Puedes crear más de una liga._
+
+```bash
+python manage.py borra_lliga "Nombre de tu Liga"
+```
+
+_Este comando eliminara la liga creada y todos sus datos._
+
+Tambien puedes crear los datos manualmente en el panel Admin.
+
+**Usuario:** `admin`  
+**Contraseña:** `admin`
+
+![Panel_Admin](docs/admin.png)
 
 ### 7. Crear un superusuario (opcional)
 

@@ -42,31 +42,48 @@ class Command(BaseCommand):
         titol_lliga = options['titol_lliga'][0]
         foto = self.get_random_avatar()
 
-        # 1. Borrar todos los datos previos
-        print("🧹 Esborrant dades antigues...")
-        Event.objects.all().delete()
-        Partit.objects.all().delete()
-        Jugador.objects.all().delete()
-        Equip.objects.all().delete()
-        Lliga.objects.all().delete()
-        User.objects.all().delete()
-        print("✅ Dades antigues esborrades.")
+        # 1. Borrar todos los datos previos. Si queremos que borre los datos al lanzar el script descomentar.
+        #print("🧹 Esborrant dades antigues...")
+        #Event.objects.all().delete()
+        #Partit.objects.all().delete()
+        #Jugador.objects.all().delete()
+        #Equip.objects.all().delete()
+        #Lliga.objects.all().delete()
+        #User.objects.all().delete()
+        #print("✅ Dades antigues esborrades.")
 
-        # 2. Crear superuser admin
-        print("👑 Creant superusuari...")
-        admin_user = User.objects.create_superuser(username="admin", password="admin", email="admin@example.com")
-        print("✅ Superusuari creat: admin / admin")
+        # 1️⃣ Comprobar o crear superusuario admin
+        print("👑 Comprovant superusuari...")
+        admin_user, created = User.objects.get_or_create(
+            username="admin",
+            defaults={
+                "email": "admin@example.com",
+                "is_staff": True,
+                "is_superuser": True
+            }
+        )
+        if created:
+            admin_user.set_password("admin")
+            admin_user.save()
+            print("✅ Superusuari creat: admin / admin")
+        else:
+            print("ℹ️ El superusuari 'admin' ja existeix.")
 
-        # 3. Crear lliga
+        # 2️⃣ Comprobar si la lliga ya existe
+        if Lliga.objects.filter(nom=titol_lliga).exists():
+            print(f"⚠️ La lliga '{titol_lliga}' ja existeix. Si us plau, tria un altre nom.")
+            return  # ⛔️ Detener ejecución aquí
+
+        # 3️⃣ Crear la lliga nova
         lliga = Lliga.objects.create(nom=titol_lliga, pais=faker.country())
         print(f"🏆 Creada la lliga: {titol_lliga}")
 
-        # 4. Crear equips
+        # 4️⃣ Crear equips
         print("🏟️ Creant equips...")
         prefix_list = ["RCD", "Athletic", "Deportivo", "Unión Deportiva", "FC", "Sporting", "Real"]
         noms_usats = set()
 
-        for _ in range(20):  # 20 equips
+        for _ in range(20):
             while True:
                 ciutat = faker.city()
                 prefix = choice(prefix_list)
@@ -90,18 +107,13 @@ class Command(BaseCommand):
             print(f"   🟢 Equip creat: {nom} ({president})")
 
             # Crear jugadors per equip
-            
             for _ in range(25):
-                # Contamos cuántos porteros tiene el equipo actualmente
                 num_porters = equip.jugadors.filter(posicio='PT').count()
-
-                # Elegimos la posición
                 if num_porters < 2:
-                    posicio = choice(['PT', 'DF', 'MC', 'DL'])  # PT permitido
+                    posicio = choice(['PT', 'DF', 'MC', 'DL'])
                 else:
-                    posicio = choice(['DF', 'MC', 'DL'])  # Ya hay 2 porteros, no más
+                    posicio = choice(['DF', 'MC', 'DL'])
 
-                # Crear el jugador
                 jugador = Jugador.objects.create(
                     nom=f"{faker.first_name_male()} {faker.last_name()}",
                     equip=equip,
@@ -110,8 +122,7 @@ class Command(BaseCommand):
                     nacionalitat=faker.country()
                 )
 
-                  # Agregar foto aleatoria
-                foto = self.get_random_avatar()  # Función que descarga un avatar de randomuser.me
+                foto = self.get_random_avatar()
                 if foto:
                     jugador.foto.save(f"jugador_{jugador.id}.jpg", foto, save=True)
 
